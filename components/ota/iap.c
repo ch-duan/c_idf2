@@ -230,6 +230,53 @@ int write_app_file(void) {
   return 0;
 }
 
+int write_app_file_from_temp(void) {
+  if (updateData == NULL) {
+    return -1;
+  }
+  uint32_t statusWrite = 0;
+  uint8_t retry = 0;
+  update_pack.updateState = IAP_FLASH_WRITE_IN_PROGRESS;
+  FLASH_If_Erase(update_pack.newAppStartADDR, update_pack.newAppStartADDR + update_pack.packageLen);
+  uint32_t packet = 0, cur_len = 0, total_len = 0, packet_len = IAP_WRITE_MAX;
+  total_len = update_pack.packageLen;
+  packet = total_len % IAP_WRITE_MAX == 0 ? total_len / IAP_WRITE_MAX : total_len / IAP_WRITE_MAX + 1;
+  if (total_len < IAP_WRITE_MAX) {
+    packet_len = total_len;
+  }
+  for (uint32_t i = 0; i < packet; i++) {
+    statusWrite = iap_write(update_pack.newAppStartADDR + i * IAP_WRITE_MAX, updateData + i * IAP_WRITE_MAX, packet_len);
+    if (HAL_OK != statusWrite) {
+      retry++;
+      uint32_t t_cur_len = cur_len + packet_len;
+      printf("[write flash error] seq:%lu,total packet:%lu,need packet:%lu,total size:%lu,cur size:%lu,need size:%lu,start addr:%08X,end addr:%08X\r\n", i,
+             packet, packet - i, total_len, t_cur_len, total_len - t_cur_len, update_pack.newAppStartADDR + i * IAP_WRITE_MAX,
+             update_pack.newAppStartADDR + i * IAP_WRITE_MAX + packet_len);
+      i--;
+      if (retry > 3) {
+        statusWrite = HAL_ERROR;
+        printf("write flash check error. retry >3.\r\n");
+        iap_Frame.iap_Data.cmd = IAP_CMD_WRITE_INTERNAL_FLASH_ERR;
+        m_replay_halder((uint8_t *) iapFrame, sizeof(iap_Frame));
+        update_pack.app = 0;
+        update_pack.updateState = IAP_STATUS_WRITE_INTERNAL_FLASH_ERR;
+        save_app_update_status(&update_pack);
+        return -1;
+      }
+      continue;
+    } else {
+      retry = 0;
+    }
+    cur_len += packet_len;
+    packet_len = total_len - cur_len >= IAP_WRITE_MAX ? IAP_WRITE_MAX : total_len - cur_len;
+    printf("[write flash success] seq:%lu,total packet:%lu,need packet:%lu,total size:%lu,cur size:%lu,need size:%lu,start addr:%08X,end addr:%08X\r\n", i,
+           packet, packet - i, total_len, cur_len, total_len - cur_len, update_pack.newAppStartADDR + i * IAP_WRITE_MAX,
+           update_pack.newAppStartADDR + i * IAP_WRITE_MAX + packet_len);
+  }
+  update_pack.updateState = IAP_NONE;
+  return 0;
+}
+
 int save_app_update_status(update_pack_t *update_pack) {
 #ifdef USE_LITTLEFS
   save_file(UPDATE_STATUS_FILE_NAME, update_pack, sizeof(update_pack_t));
@@ -470,7 +517,44 @@ void iapCheckUpdate(void) {
 
 void boot_iapCheckUpdate(void) {
   if (update_pack.updateState == IAP_PREPARATION) {
-    check_update_bin();
+    // check_update_bin();
+    uint32_t statusWrite = 0;
+    int ret = 0;
+    printf("save update bin.\r\n");
+    ret = checkout_temp_file_md5(update_pack, updateData);
+    if (ret != 0) {
+      update_pack.updateState = IAP_CMP_ERROR;
+      iap_Frame.iap_Data.cmd = IAP_CMD_UPDATE_ERR;
+      m_replay_halder((uint8_t *) iapFrame, sizeof(iap_Frame));
+      printf("check md5 failure.%d\r\n", ret);
+    } else {
+      printf("check md5 success.%d\r\n", ret);
+      update_pack.app = 1;
+      save_app_update_status(&update_pack);
+      update_pack.updateState = IAP_FLASH_WRITE_IN_PROGRESS;
+      statusWrite = write_app_file_from_temp();
+      if (statusWrite == HAL_OK) {
+        printf("write flash ok\r\n");
+        update_pack.app = 0;
+        update_pack.appStartADDR = update_pack.newAppStartADDR;
+        save_app_update_status(&update_pack);
+        update_pack.updateState = IAP_NONE;
+        iap_Frame.iap_Data.cmd = IAP_CMD_UPDATE_FINISH;
+        printf("debug send IAP_CMD_UPDATE_FINISH\r\n");
+        m_replay_halder((uint8_t *) iapFrame, sizeof(iap_Frame));
+        // waiting for flash
+#if defined(CMSIS_OS2_H_)
+        osDelay(500);
+#elif defined(STM32_HAL_LEGACY)
+        HAL_Delay(500);
+#elif defined(INC_FREERTOS_H)
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+#endif
+        jump2APP(update_pack.appStartADDR);
+      } else {
+        printf("write flash failure.%lu\r\n", statusWrite);
+      }
+    }
   }
 }
 
