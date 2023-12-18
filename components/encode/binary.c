@@ -72,9 +72,9 @@ void byte_copy(uint8_t *out, uint8_t *in, int len, bool BigEndian) {
   }
 }
 
-void float2Byte(uint8_t *u8Arry, float *floatdata, bool BigEndian) {
+void float2Byte(uint8_t *u8Arry, float floatdata, bool BigEndian) {
   uint8_t farray[4];
-  *(float *) farray = *floatdata;
+  *(float *) farray = floatdata;
   if (BigEndian) {
     u8Arry[3] = farray[0];
     u8Arry[2] = farray[1];
