@@ -1,6 +1,8 @@
-#pragma once
+#ifndef H_C_IDF_UART_COMM_HELPER_H
+#define H_C_IDF_UART_COMM_HELPER_H
 #include "stm32f4xx_hal.h"
 // dma receive buf queue
+#include <stdint.h>
 #define RECV_BUF_MAX        8192
 #define USE_RXEVENTCALLBACK 1
 typedef void (*PacketArrived)(uint8_t *packet, uint16_t packetLen, void *arg);
@@ -31,4 +33,6 @@ int UartPacketHandlerInit(UartMessageHandler *msgHandler, UART_HandleTypeDef *ua
                           PacketArrived pHandlerPacket);
 #ifdef __cplusplus
 }
+#endif
+
 #endif

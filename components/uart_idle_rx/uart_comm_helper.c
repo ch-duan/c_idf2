@@ -1,9 +1,3 @@
-/*
- * uart_comm_helper.c
- *
- *  Created on: Jul 25, 2020
- *      Author: mengjingshi
- */
 #include "uart_comm_helper.h"
 
 #include <memory.h>
