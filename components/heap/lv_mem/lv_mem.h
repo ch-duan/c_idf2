@@ -60,7 +60,7 @@ typedef struct {
 } lv_mem_buf_t;
 
 typedef lv_mem_buf_t lv_mem_buf_arr_t[LV_MEM_BUF_MAX_NUM];
-extern lv_mem_buf_arr_t _lv_mem_buf;
+// extern lv_mem_buf_arr_t _lv_mem_buf;
 
 /**********************
  * GLOBAL PROTOTYPES

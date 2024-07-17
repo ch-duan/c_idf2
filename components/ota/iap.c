@@ -182,8 +182,8 @@ int write_app_file(void) {
   if (read_file_size(UPDATE_FILE_NAME, &total_len) == -1) {
     return -1;
   }
-#elif
-  total_len = update_buffer.packageLen;
+#else
+  total_len = update_pack.packageLen;
 #endif
   packet = total_len % IAP_WRITE_MAX == 0 ? total_len / IAP_WRITE_MAX : total_len / IAP_WRITE_MAX + 1;
   if (total_len < IAP_WRITE_MAX) {
@@ -283,7 +283,6 @@ int save_app_update_status(update_pack_t *update_pack) {
 #elif USE_EXTERNAL_FLASH
   save_app_update_status_external_flash(update_pack);
 #elif USE_INTERNAL_FLASH
-#elif
 #endif
   return 0;
 }
@@ -476,6 +475,7 @@ void bootCheckUpdateApp(void) {
 }
 
 void iapCheckUpdate(void) {
+#ifdef USE_LITTLEFS
   int ret = 0;
   if (update_pack.updateState == IAP_PREPARATION) {
     ret = checkout_temp_file_md5(update_pack, updateData);
@@ -513,6 +513,7 @@ void iapCheckUpdate(void) {
       }
     }
   }
+#endif
 }
 
 void boot_iapCheckUpdate(void) {

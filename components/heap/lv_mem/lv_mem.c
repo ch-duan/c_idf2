@@ -487,110 +487,110 @@ uint32_t _lv_mem_get_size(const void *data) {
 
 #endif /*LV_ENABLE_GC*/
 
-/**
- * Get a temporal buffer with the given size.
- * @param size the required size
- */
-void *_lv_mem_buf_get(uint32_t size) {
-  if (size == 0)
-    return NULL;
+// /**
+//  * Get a temporal buffer with the given size.
+//  * @param size the required size
+//  */
+// void *_lv_mem_buf_get(uint32_t size) {
+//   if (size == 0)
+//     return NULL;
 
-  /*Try small static buffers first*/
-  uint8_t i;
-  if (size <= MEM_BUF_SMALL_SIZE) {
-    for (i = 0; i < sizeof(mem_buf_small) / sizeof(mem_buf_small[0]); i++) {
-      if (mem_buf_small[i].used == 0) {
-        mem_buf_small[i].used = 1;
-        return mem_buf_small[i].p;
-      }
-    }
-  }
+//   /*Try small static buffers first*/
+//   uint8_t i;
+//   if (size <= MEM_BUF_SMALL_SIZE) {
+//     for (i = 0; i < sizeof(mem_buf_small) / sizeof(mem_buf_small[0]); i++) {
+//       if (mem_buf_small[i].used == 0) {
+//         mem_buf_small[i].used = 1;
+//         return mem_buf_small[i].p;
+//       }
+//     }
+//   }
 
-  /*Try to find a free buffer with suitable size */
-  int8_t i_guess = -1;
-  for (i = 0; i < LV_MEM_BUF_MAX_NUM; i++) {
-    if (LV_GC_ROOT(_lv_mem_buf[i]).used == 0 && LV_GC_ROOT(_lv_mem_buf[i]).size >= size) {
-      if (LV_GC_ROOT(_lv_mem_buf[i]).size == size) {
-        LV_GC_ROOT(_lv_mem_buf[i]).used = 1;
-        return LV_GC_ROOT(_lv_mem_buf[i]).p;
-      } else if (i_guess < 0) {
-        i_guess = i;
-      }
-      /*If size of `i` is closer to `size` prefer it*/
-      else if (LV_GC_ROOT(_lv_mem_buf[i]).size < LV_GC_ROOT(_lv_mem_buf[i_guess]).size) {
-        i_guess = i;
-      }
-    }
-  }
+//   /*Try to find a free buffer with suitable size */
+//   int8_t i_guess = -1;
+//   for (i = 0; i < LV_MEM_BUF_MAX_NUM; i++) {
+//     if (LV_GC_ROOT(_lv_mem_buf[i]).used == 0 && LV_GC_ROOT(_lv_mem_buf[i]).size >= size) {
+//       if (LV_GC_ROOT(_lv_mem_buf[i]).size == size) {
+//         LV_GC_ROOT(_lv_mem_buf[i]).used = 1;
+//         return LV_GC_ROOT(_lv_mem_buf[i]).p;
+//       } else if (i_guess < 0) {
+//         i_guess = i;
+//       }
+//       /*If size of `i` is closer to `size` prefer it*/
+//       else if (LV_GC_ROOT(_lv_mem_buf[i]).size < LV_GC_ROOT(_lv_mem_buf[i_guess]).size) {
+//         i_guess = i;
+//       }
+//     }
+//   }
 
-  if (i_guess >= 0) {
-    LV_GC_ROOT(_lv_mem_buf[i_guess]).used = 1;
-    return LV_GC_ROOT(_lv_mem_buf[i_guess]).p;
-  }
+//   if (i_guess >= 0) {
+//     LV_GC_ROOT(_lv_mem_buf[i_guess]).used = 1;
+//     return LV_GC_ROOT(_lv_mem_buf[i_guess]).p;
+//   }
 
-  /*Reallocate a free buffer*/
-  for (i = 0; i < LV_MEM_BUF_MAX_NUM; i++) {
-    if (LV_GC_ROOT(_lv_mem_buf[i]).used == 0) {
-      /*if this fails you probably need to increase your LV_MEM_SIZE/heap size*/
-      void *buf = lv_mem_realloc(LV_GC_ROOT(_lv_mem_buf[i]).p, size);
-      if (buf == NULL) {
-        LV_DEBUG_ASSERT(false, "Out of memory, can't allocate a new buffer (increase your LV_MEM_SIZE/heap size)", 0x00);
-        return NULL;
-      }
-      LV_GC_ROOT(_lv_mem_buf[i]).used = 1;
-      LV_GC_ROOT(_lv_mem_buf[i]).size = size;
-      LV_GC_ROOT(_lv_mem_buf[i]).p = buf;
-      return LV_GC_ROOT(_lv_mem_buf[i]).p;
-    }
-  }
+//   /*Reallocate a free buffer*/
+//   for (i = 0; i < LV_MEM_BUF_MAX_NUM; i++) {
+//     if (LV_GC_ROOT(_lv_mem_buf[i]).used == 0) {
+//       /*if this fails you probably need to increase your LV_MEM_SIZE/heap size*/
+//       void *buf = lv_mem_realloc(LV_GC_ROOT(_lv_mem_buf[i]).p, size);
+//       if (buf == NULL) {
+//         LV_DEBUG_ASSERT(false, "Out of memory, can't allocate a new buffer (increase your LV_MEM_SIZE/heap size)", 0x00);
+//         return NULL;
+//       }
+//       LV_GC_ROOT(_lv_mem_buf[i]).used = 1;
+//       LV_GC_ROOT(_lv_mem_buf[i]).size = size;
+//       LV_GC_ROOT(_lv_mem_buf[i]).p = buf;
+//       return LV_GC_ROOT(_lv_mem_buf[i]).p;
+//     }
+//   }
 
-  LV_DEBUG_ASSERT(false, "No free buffer. Increase LV_MEM_BUF_MAX_NUM.", 0x00);
-  return NULL;
-}
+//   LV_DEBUG_ASSERT(false, "No free buffer. Increase LV_MEM_BUF_MAX_NUM.", 0x00);
+//   return NULL;
+// }
 
-/**
- * Release a memory buffer
- * @param p buffer to release
- */
-void _lv_mem_buf_release(void *p) {
-  uint8_t i;
+// /**
+//  * Release a memory buffer
+//  * @param p buffer to release
+//  */
+// void _lv_mem_buf_release(void *p) {
+//   uint8_t i;
 
-  /*Try small static buffers first*/
-  for (i = 0; i < sizeof(mem_buf_small) / sizeof(mem_buf_small[0]); i++) {
-    if (mem_buf_small[i].p == p) {
-      mem_buf_small[i].used = 0;
-      return;
-    }
-  }
+//   /*Try small static buffers first*/
+//   for (i = 0; i < sizeof(mem_buf_small) / sizeof(mem_buf_small[0]); i++) {
+//     if (mem_buf_small[i].p == p) {
+//       mem_buf_small[i].used = 0;
+//       return;
+//     }
+//   }
 
-  for (i = 0; i < LV_MEM_BUF_MAX_NUM; i++) {
-    if (LV_GC_ROOT(_lv_mem_buf[i]).p == p) {
-      LV_GC_ROOT(_lv_mem_buf[i]).used = 0;
-      return;
-    }
-  }
+//   for (i = 0; i < LV_MEM_BUF_MAX_NUM; i++) {
+//     if (LV_GC_ROOT(_lv_mem_buf[i]).p == p) {
+//       LV_GC_ROOT(_lv_mem_buf[i]).used = 0;
+//       return;
+//     }
+//   }
 
-  LV_LOG_ERROR("lv_mem_buf_release: p is not a known buffer");
-}
+//   LV_LOG_ERROR("lv_mem_buf_release: p is not a known buffer");
+// }
 
 /**
  * Free all memory buffers
  */
-void _lv_mem_buf_free_all(void) {
-  uint8_t i;
-  for (i = 0; i < sizeof(mem_buf_small) / sizeof(mem_buf_small[0]); i++) {
-    mem_buf_small[i].used = 0;
-  }
+// void _lv_mem_buf_free_all(void) {
+//   uint8_t i;
+//   for (i = 0; i < sizeof(mem_buf_small) / sizeof(mem_buf_small[0]); i++) {
+//     mem_buf_small[i].used = 0;
+//   }
 
-  for (i = 0; i < LV_MEM_BUF_MAX_NUM; i++) {
-    if (LV_GC_ROOT(_lv_mem_buf[i]).p) {
-      lv_mem_free(LV_GC_ROOT(_lv_mem_buf[i]).p);
-      LV_GC_ROOT(_lv_mem_buf[i]).p = NULL;
-      LV_GC_ROOT(_lv_mem_buf[i]).used = 0;
-      LV_GC_ROOT(_lv_mem_buf[i]).size = 0;
-    }
-  }
-}
+//   for (i = 0; i < LV_MEM_BUF_MAX_NUM; i++) {
+//     if (LV_GC_ROOT(_lv_mem_buf[i]).p) {
+//       lv_mem_free(LV_GC_ROOT(_lv_mem_buf[i]).p);
+//       LV_GC_ROOT(_lv_mem_buf[i]).p = NULL;
+//       LV_GC_ROOT(_lv_mem_buf[i]).used = 0;
+//       LV_GC_ROOT(_lv_mem_buf[i]).size = 0;
+//     }
+//   }
+// }
 
 #if LV_MEMCPY_MEMSET_STD == 0
 /**

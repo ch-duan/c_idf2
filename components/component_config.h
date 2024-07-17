@@ -1,0 +1,9 @@
+#ifndef H_C_IDF_COMPONENT_CONFIG_H
+#define H_C_IDF_COMPONENT_CONFIG_H
+
+#define USE_USB_VIDEO 0
+#define USE_USB_I2C 0
+#define USE_USB_FREERTOS 1
+#define USE_USB_LITTLEFS 1
+
+#endif

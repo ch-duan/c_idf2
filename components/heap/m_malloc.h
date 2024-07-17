@@ -1,9 +1,6 @@
-#pragma once
+#ifndef H_C_IDF_MALLOC_H
+#define H_C_IDF_MALLOC_H
 #include <stddef.h>
-
-#ifndef USE_EXTERNAL_SRAM
-#define USE_EXTERNAL_SRAM 1
-#endif
 
 #if USE_EXTERNAL_SRAM == 1
 #define EXT_RAM_ATTR             __attribute__((section(".sram")))
@@ -23,4 +20,5 @@ int heap_free_size(void);
 
 #ifdef __cplusplus
 }
+#endif
 #endif

@@ -1,10 +1,6 @@
+#if USE_LITTLEFS == 1
 #include "iap.h"
-
-#if defined(USE_LITTLEFS)
 #include "vfs.h"
-#endif
-
-#if defined(USE_LITTLEFS)
 
 int load_app_update_status(update_pack_t *update_buffer) {
   unsigned long size = 0;

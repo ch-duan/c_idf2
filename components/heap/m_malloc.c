@@ -21,6 +21,7 @@ HeapRegion_t xHeapRegions[] = {
 };
 
 void malloc_init() {
+  vPortDefineHeapRegions(xHeapRegions);
 #if USE_EXTERNAL_SRAM == 1
   lv_mem_init(ext_ram);
 #endif

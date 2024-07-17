@@ -1,50 +1,42 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.5)
+
+set(C_IDF_SRC ${C_IDF_SRC}
+)
+option(C_IDF_ENABLE_BACKTRACE "C_IDF Enable backtrace" ON)
+option(C_IDF_ENABLE_UVC "C_IDF Enable UVC" ON)
+option(C_IDF_ENABLE_I2C "C_IDF Enable i2c" ON)
+option(C_IDF_ENABLE_LITTLEFS "C_IDF Enable littlefs" ON)
+option(C_IDF_ENABLE_FREERTOS "C_IDF Enable freertos" ON)
+option(C_IDF_ENABLE_LWRB "C_IDF Enable lwrb" ON)
+option(C_IDF_ENABLE_EXTERNAL_FLASH "C_IDF Enable external flash" ON)
+option(C_IDF_ENABLE_MODBUS "C_IDF Enable free modbus" ON)
+option(C_IDF_ENABLE_OTA "C_IDF Enable free ota" ON)
 
 file(GLOB_RECURSE C_IDF_SRC "${CMAKE_CURRENT_LIST_DIR}/algorithm/*.c**"
   "${CMAKE_CURRENT_LIST_DIR}/button/*.c**"
   "${CMAKE_CURRENT_LIST_DIR}/heap/*.c**"
+  "${CMAKE_CURRENT_LIST_DIR}/crc/crc.c"
   "${CMAKE_CURRENT_LIST_DIR}/crypto/*.c**"
   "${CMAKE_CURRENT_LIST_DIR}/encode/*.c**"
   "${CMAKE_CURRENT_LIST_DIR}/delay/*.c**"
-  "${CMAKE_CURRENT_LIST_DIR}/flash/*.c**"
-  "${CMAKE_CURRENT_LIST_DIR}/vfs/*.c**"
-  "${CMAKE_CURRENT_LIST_DIR}/ota/*.c**"
   "${CMAKE_CURRENT_LIST_DIR}/log/*.c**"
   "${CMAKE_CURRENT_LIST_DIR}/log/*.S"
   "${CMAKE_CURRENT_LIST_DIR}/message_queue/*.c"
   "${CMAKE_CURRENT_LIST_DIR}/mutex/*.c"
   "${CMAKE_CURRENT_LIST_DIR}/string_tools/*.c"
-  "${CMAKE_CURRENT_LIST_DIR}/VIDEO/src/*.c"
-  "${CMAKE_CURRENT_LIST_DIR}/w25qxx/*.c"
   "${CMAKE_CURRENT_LIST_DIR}/ws2812/*.c"
   "${CMAKE_CURRENT_LIST_DIR}/uart_idle_rx/*.c"
-  "${CMAKE_CURRENT_LIST_DIR}/QMI8658/*.c"
 )
 
-set(C_IDF_SRC ${C_IDF_SRC} "${CMAKE_CURRENT_LIST_DIR}/cm_backtrace/cm_backtrace.c"
-  "${CMAKE_CURRENT_LIST_DIR}/lwrb/lwrb/src/lwrb/lwrb.c"
-  "${CMAKE_CURRENT_LIST_DIR}/littlefs/lfs.c"
-  "${CMAKE_CURRENT_LIST_DIR}/littlefs/lfs_util.c"
-)
 set(C_IDF_INCLUDES
   ${CMAKE_CURRENT_LIST_DIR}/
-  ${CMAKE_CURRENT_LIST_DIR}/littlefs
-  ${CMAKE_CURRENT_LIST_DIR}/w25qxx/src
-  ${CMAKE_CURRENT_LIST_DIR}/w25qxx/interface
-  ${CMAKE_CURRENT_LIST_DIR}/cm_backtrace
-  ${CMAKE_CURRENT_LIST_DIR}/w25qxx
   ${CMAKE_CURRENT_LIST_DIR}/encode
   ${CMAKE_CURRENT_LIST_DIR}/heap/lv_mem
   ${CMAKE_CURRENT_LIST_DIR}/heap
-  ${CMAKE_CURRENT_LIST_DIR}/VIDEO
-  ${CMAKE_CURRENT_LIST_DIR}/VIDEO/Inc
   ${CMAKE_CURRENT_LIST_DIR}/delay
-  ${CMAKE_CURRENT_LIST_DIR}/ota
+  ${CMAKE_CURRENT_LIST_DIR}/crc
   ${CMAKE_CURRENT_LIST_DIR}/log
   ${CMAKE_CURRENT_LIST_DIR}/log/rtt
-  ${CMAKE_CURRENT_LIST_DIR}/QMI8658
-  ${CMAKE_CURRENT_LIST_DIR}/vfs
-  ${CMAKE_CURRENT_LIST_DIR}/flash/nor_flash
   ${CMAKE_CURRENT_LIST_DIR}/sys
   ${CMAKE_CURRENT_LIST_DIR}/crypto
   ${CMAKE_CURRENT_LIST_DIR}/button
@@ -52,8 +44,98 @@ set(C_IDF_INCLUDES
   ${CMAKE_CURRENT_LIST_DIR}/message_queue
   ${CMAKE_CURRENT_LIST_DIR}/algorithm/filter
   ${CMAKE_CURRENT_LIST_DIR}/uart_idle_rx
-  ${CMAKE_CURRENT_LIST_DIR}/lwrb/lwrb/src/include
-  ${CMAKE_CURRENT_LIST_DIR}/lwrb/lwrb/src/include/lwrb
   ${CMAKE_CURRENT_LIST_DIR}/ws2812
 )
 
+if(C_IDF_ENABLE_LITTLEFS)
+  set(C_IDF_LITTLEFS_SRC ${C_IDF_LITTLEFS_SRC})
+  list(APPEND C_IDF_LITTLEFS_SRC
+    "${CMAKE_CURRENT_LIST_DIR}/littlefs/lfs.c"
+    "${CMAKE_CURRENT_LIST_DIR}/littlefs/lfs_util.c"
+  )
+  list(APPEND C_IDF_SRC ${C_IDF_LITTLEFS_SRC})
+  list(APPEND C_IDF_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/littlefs)
+endif()
+
+if(C_IDF_ENABLE_BACKTRACE)
+  set(C_IDF_CM_BACKTRACE_SRC ${C_IDF_CM_BACKTRACE_SRC})
+  list(APPEND C_IDF_CM_BACKTRACE_SRC
+    "${CMAKE_CURRENT_LIST_DIR}/cm_backtrace/cm_backtrace.c"
+  )
+  list(APPEND C_IDF_SRC ${C_IDF_CM_BACKTRACE_SRC})
+  list(APPEND C_IDF_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/cm_backtrace)
+endif()
+
+if(C_IDF_ENABLE_LWRB)
+  set(C_IDF_LWRB_SRC ${C_IDF_LWRB_SRC})
+  list(APPEND C_IDF_LWRB_SRC
+    "${CMAKE_CURRENT_LIST_DIR}/lwrb/lwrb/src/lwrb/lwrb.c"
+  )
+  list(APPEND C_IDF_SRC ${C_IDF_CM_BACKTRACE_SRC})
+  list(APPEND C_IDF_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/lwrb/lwrb/src/include
+    ${CMAKE_CURRENT_LIST_DIR}/lwrb/lwrb/src/include/lwrb
+  )
+endif()
+
+if(C_IDF_ENABLE_UVC)
+  set(C_IDF_UVC_SRC ${C_IDF_UVC_SRC})
+  list(APPEND C_IDF_UVC_SRC
+    "${CMAKE_CURRENT_LIST_DIR}/VIDEO/src/*.c"
+  )
+  list(APPEND C_IDF_SRC ${C_IDF_UVC_SRC})
+  list(APPEND C_IDF_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/VIDEO
+    ${CMAKE_CURRENT_LIST_DIR}/VIDEO/Inc
+  )
+endif()
+
+if(C_IDF_ENABLE_I2C)
+  set(C_IDF_I2C_SRC ${C_IDF_I2C_SRC})
+  list(APPEND C_IDF_I2C_SRC
+    "${CMAKE_CURRENT_LIST_DIR}/QMI8658/*.c"
+  )
+  list(APPEND C_IDF_SRC ${C_IDF_I2C_SRC})
+  list(APPEND C_IDF_INCLUDES
+    ${CMAKE_CURRENT_LIST_DIR}/QMI8658
+  )
+endif()
+
+if(C_IDF_ENABLE_EXTERNAL_FLASH)
+  set(C_IDF_EXTERNAL_FLASH_SRC ${C_IDF_EXTERNAL_FLASH_SRC})
+  list(APPEND C_IDF_EXTERNAL_FLASH_SRC
+    "${CMAKE_CURRENT_LIST_DIR}/w25qxx/*.c"
+    "${CMAKE_CURRENT_LIST_DIR}/flash/*.c**"
+    "${CMAKE_CURRENT_LIST_DIR}/vfs/*.c**"
+  )
+  list(APPEND C_IDF_SRC ${C_IDF_EXTERNAL_FLASH_SRC})
+  list(APPEND C_IDF_INCLUDES
+    ${CMAKE_CURRENT_LIST_DIR}/w25qxx/src
+    ${CMAKE_CURRENT_LIST_DIR}/w25qxx/interface
+    ${CMAKE_CURRENT_LIST_DIR}/w25qxx
+    ${CMAKE_CURRENT_LIST_DIR}/vfs
+    ${CMAKE_CURRENT_LIST_DIR}/flash/nor_flash
+  )
+endif()
+
+if(C_IDF_ENABLE_MODBUS)
+  set(C_IDF_MODBUS_SRC ${C_IDF_MODBUS_SRC})
+  list(APPEND C_IDF_MODBUS_SRC
+    ${CMAKE_CURRENT_LIST_DIR}/MODBUS/Src/Modbus.c
+    ${CMAKE_CURRENT_LIST_DIR}/MODBUS/Src/UARTCallback.c
+  )
+  list(APPEND C_IDF_SRC ${C_IDF_MODBUS_SRC})
+  list(APPEND C_IDF_INCLUDES
+    ${CMAKE_CURRENT_LIST_DIR}/MODBUS
+    ${CMAKE_CURRENT_LIST_DIR}/MODBUS/Inc
+  )
+endif()
+
+if(C_IDF_ENABLE_OTA)
+  set(C_IDF_OTA_SRC ${C_IDF_OTA_SRC})
+  list(APPEND C_IDF_OTA_SRC
+    "${CMAKE_CURRENT_LIST_DIR}/ota/*.c**"
+  )
+  list(APPEND C_IDF_SRC ${C_IDF_OTA_SRC})
+  list(APPEND C_IDF_INCLUDES
+    ${CMAKE_CURRENT_LIST_DIR}/ota
+  )
+endif()

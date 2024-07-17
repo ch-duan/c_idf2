@@ -1,4 +1,5 @@
-#pragma once
+#ifndef H_C_IDF_LV_CONFIG_H
+#define H_C_IDF_LV_CONFIG_H
 
 #include "FreeRTOS.h"
 #include "cmsis_os2.h"
@@ -39,3 +40,5 @@
 #define LV_MUTEX_LOCK(mutex)   osSemaphoreAcquire(mutex, portMAX_DELAY);
 
 #define LV_MUTEX_UNLOCK(mutex) osSemaphoreRelease(mutex);
+
+#endif

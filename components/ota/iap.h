@@ -21,10 +21,10 @@ extern "C" {
 
 /* if use fatfs */
 // #define USE_LITTLEFS
-#define USE_LITTLEFS 1
+// #define USE_LITTLEFS 0
 
 /* user code form external flash */
-#define USE_EXTERNAL_FLASH
+// #define USE_EXTERNAL_FLASH
 
 #define IAP_USE_RTOS
 
@@ -205,7 +205,7 @@ int write_app_file(void);
 void printf_iap_info(update_pack_t update_buffer);
 void save_app_file(update_pack_t *update_buffer, const uint8_t *file_buffer, uint32_t file_len);
 
-#if defined(USE_LITTLEFS)
+#ifdef USE_LITTLEFS
 #define UPDATE_FILE_NAME        "appFile.bin"
 #define UPDATE_STATUS_FILE_NAME "status.txt"
 
@@ -217,7 +217,7 @@ int CheckoutAppUpdateFile(update_pack_t update_buffer);
 void save_app_update_status_external_flash(update_pack_t *update_buffer);
 int load_app_update_status(update_pack_t *update_buffer);
 
-#elif define(USE_INTERNAL_FLASH)
+#elif  defined(USE_INTERNAL_FLASH)
 #endif
 
 void Vector_Init_Setting(uint32_t addr);

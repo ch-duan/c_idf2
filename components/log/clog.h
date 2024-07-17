@@ -1,9 +1,10 @@
-#pragma once
+#ifndef H_C_IDF_LOG_H
+#define H_C_IDF_LOG_H
 
 #include <stdio.h>
 
 #include "FreeRTOS.h"
-#include "SEGGER_RTT.h"
+//#include "SEGGER_RTT.h"
 #include "cmsis_os2.h"
 
 // #define CLOG(fmt, ...)  printf(__VA_ARGS__)
@@ -55,4 +56,6 @@ extern "C" {
 void init_log(void);
 #ifdef __cplusplus
 }
+#endif
+
 #endif
