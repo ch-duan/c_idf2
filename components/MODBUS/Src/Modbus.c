@@ -12,6 +12,8 @@
 #include "queue.h"
 #include "main.h"
 #include "Modbus.h"
+#include <stdint.h>
+#include <stddef.h>
 #include "timers.h"
 #include "semphr.h"
 
@@ -224,7 +226,7 @@ void ModbusInit(modbusHandler_t * modH)
 		  }
 #else
 		  modH->myTaskModbusAHandle = osThreadNew(StartTaskModbusSlave, modH, &myTaskModbusA_attributes);
-		  modH->slave_queue_handle = osMessageQueueNew (MAX_SLAVE_QUEUE, sizeof(modbus_t), &QueueTelegram_attributes);
+		  modH->slave_queue_handle = osMessageQueueNew (MAX_SLAVE_QUEUE, sizeof(uint16_t), &QueueTelegram_attributes);
 #endif
 
 
@@ -760,22 +762,26 @@ void StartTaskModbusSlave(void *argument)
 			break;
 		case MB_FC_WRITE_COIL:{
 				modH->i8state = process_FC5(modH);
-				xQueueSend(modH->slave_queue_handle, &modH->u8Buffer[FUNC], 0);
+				uint16_t u16StartCoil = word( modH->u8Buffer[ ADD_HI ], modH->u8Buffer[ ADD_LO ] );
+				xQueueSend(modH->slave_queue_handle, &u16StartCoil, 0);
 			}
 			break;
 		case MB_FC_WRITE_REGISTER :{
 				modH->i8state = process_FC6(modH);
-				xQueueSend(modH->slave_queue_handle, &modH->u8Buffer[FUNC], 0);
+				uint16_t u16StartCoil = word( modH->u8Buffer[ ADD_HI ], modH->u8Buffer[ ADD_LO ] );
+				xQueueSend(modH->slave_queue_handle, &u16StartCoil, 0);
 			}
 			break;
 		case MB_FC_WRITE_MULTIPLE_COILS:{
 				modH->i8state = process_FC15(modH);
-				xQueueSend(modH->slave_queue_handle, &modH->u8Buffer[FUNC], 0);
+				uint16_t u16StartCoil = word( modH->u8Buffer[ ADD_HI ], modH->u8Buffer[ ADD_LO ] );
+				xQueueSend(modH->slave_queue_handle, &u16StartCoil, 0);
 			}
 			break;
 		case MB_FC_WRITE_MULTIPLE_REGISTERS :{
 				modH->i8state = process_FC16(modH);
-				xQueueSend(modH->slave_queue_handle, &modH->u8Buffer[FUNC], 0);
+				uint16_t u16StartCoil = word( modH->u8Buffer[ ADD_HI ], modH->u8Buffer[ ADD_LO ] );
+				xQueueSend(modH->slave_queue_handle, &u16StartCoil, 0);
 			}
 			break;
 		default:
@@ -1947,8 +1953,3 @@ int8_t process_FC16(modbusHandler_t *modH )
 
     return u8CopyBufferSize;
 }
-
-
-
-
-

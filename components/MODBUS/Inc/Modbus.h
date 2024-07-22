@@ -10,6 +10,7 @@
 
 #include <inttypes.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "FreeRTOS.h"
 #include "ModbusConfig.h"
@@ -113,7 +114,6 @@ typedef union {
   uint32_t u32;
 
 } bytesFields;
-
 /**
  * @struct modbus_t
  * @brief
