@@ -37,6 +37,20 @@ extern osSemaphoreId_t printf_mutex;
     printf(__VA_ARGS__);                               \
   }
 
+
+#define CLOG_P(...)                                      \
+  if (printf_mutex != NULL) {                          \
+    do {                                               \
+      osSemaphoreAcquire(printf_mutex, portMAX_DELAY); \
+      printf(__VA_ARGS__);                             \
+      printf("\r\n");                                  \
+      osSemaphoreRelease(printf_mutex);                \
+    } while (0);                                       \
+  } else {                                             \
+    printf(__VA_ARGS__);                               \
+  }
+
+
 #define LOG_LEVEL_LOCAL(level, tag, format, ...)                   \
   do {                                                             \
     if (LOG_LOCAL_LEVEL != LOG_NONE && LOG_LOCAL_LEVEL >= level) { \

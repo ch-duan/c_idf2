@@ -1,4 +1,5 @@
-#pragma once
+#ifndef H_C_IDF_VFS_H
+#define H_C_IDF_VFS_H
 
 #ifndef USE_VFS
 #define USE_VFS
@@ -77,6 +78,8 @@ char* f_gets(char* buff, int len, lfs_file_t* fp);                              
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif

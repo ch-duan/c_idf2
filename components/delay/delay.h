@@ -1,5 +1,5 @@
-#ifndef _DELAY_H
-#define _DELAY_H
+#ifndef H_C_IDF_DELAY_H
+#define H_C_IDF_DELAY_H
 #include <stdint.h>
 
 void delay_us(uint32_t u_sec);

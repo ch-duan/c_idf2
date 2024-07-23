@@ -1,5 +1,5 @@
-#ifndef CH_STRING_H
-#define CH_STRING_H
+#ifndef H_C_IDF_STRING_H
+#define H_C_IDF_STRING_H
 #include <stdint.h>
 #ifdef __cplusplus
 extern "C" {

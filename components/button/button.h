@@ -1,4 +1,5 @@
-#pragma once
+#ifndef H_C_IDF_BUTTON_CUSTOM_H
+#define H_C_IDF_BUTTON_CUSTOM_H
 #include "stdint.h"
 #include "string.h"
 
@@ -54,4 +55,6 @@ void button_set_multiple_click(struct Button* handle, uint16_t multiple_click);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

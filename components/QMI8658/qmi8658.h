@@ -1,4 +1,5 @@
-#pragma once
+#ifndef H_C_IDF_QMI8658_H
+#define H_C_IDF_QMI8658_H
 
 #include "i2c.h"
 #include "qmi8658Constant.h"
@@ -468,4 +469,6 @@ void QMI8658_disableWakeOnMotion(void);
 void QMI8658_soft_reset(void);
 #ifdef __cplusplus
 }
+#endif
+
 #endif

@@ -5,7 +5,9 @@
  * Copyright (c) 2017, Arm Limited. All rights reserved.
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#pragma once
+
+#ifndef H_C_IDF_LFS_CONFIG_H
+#define H_C_IDF_LFS_CONFIG_H
 
 // Users can override lfs_util.h with their own configuration by defining
 // LFS_CONFIG as a header file to include (-DLFS_CONFIG=lfs_config.h).
@@ -224,4 +226,6 @@ static inline void lfs_free(void *p) {
 
 #ifdef __cplusplus
 } /* extern "C" */
+#endif
+
 #endif

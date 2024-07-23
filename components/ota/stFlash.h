@@ -5,7 +5,8 @@
  *      Author: Administrator
  */
 
-#pragma once
+#ifndef H_C_IDF_STFLASH_H
+#define H_C_IDF_STFLASH_H
 #include <stdint.h>
 
 #define INTERNAL_FLASH STMF40X_STMF10X
@@ -78,4 +79,6 @@ uint32_t GetSectorStartAddr(uint32_t sector);
 uint32_t GetSectorSize(uint32_t sector);
 #ifdef __cplusplus
 }
+#endif
+
 #endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef H_C_IDF_MEDIAN_FILTER_H
+#define H_C_IDF_MEDIAN_FILTER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,4 +11,6 @@ int Deduplication(int *data, int len);
 int KalmanFilter(int inData);
 #ifdef __cplusplus
 }
+#endif
+
 #endif

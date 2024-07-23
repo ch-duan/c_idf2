@@ -1,4 +1,5 @@
-#pragma once
+#ifndef H_C_IDF_DWT_STM32_DELAY_H
+#define H_C_IDF_DWT_STM32_DELAY_H
 #include "main.h"
 #ifdef __cplusplus
 extern "C" {
@@ -50,4 +51,6 @@ __STATIC_INLINE uint32_t OS_TS_GET(void)
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

@@ -1,5 +1,5 @@
-#ifndef MD5_H
-#define MD5_H
+#ifndef H_C_IDF_MD5_H
+#define H_C_IDF_MD5_H
 
 typedef struct {
   unsigned int count[2];

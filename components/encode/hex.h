@@ -1,10 +1,8 @@
-#ifndef INC_HEX_H_
-#define INC_HEX_H_
+#ifndef H_C_IDF_HEX_H
+#define H_C_IDF_HEX_H
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef H_C_IDF_MUTEX_H
+#define H_C_IDF_MUTEX_H
 #include "cmsis_os2.h"
 typedef osSemaphoreId_t C_MUTEX;
 #ifdef __cplusplus
@@ -14,4 +15,6 @@ void qb_sys_mutex_lock(C_MUTEX m);
 void qb_sys_mutex_unlock(C_MUTEX m);
 #ifdef __cplusplus
 }
+#endif
+
 #endif

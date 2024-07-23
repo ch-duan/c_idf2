@@ -1,8 +1,7 @@
-#ifndef CH_ENCODE_BINARY_H
-#define CH_ENCODE_BINARY_H
+#ifndef H_C_IDF_ENCODE_BINARY_H
+#define H_C_IDF_ENCODE_BINARY_H
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

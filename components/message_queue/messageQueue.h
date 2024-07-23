@@ -1,13 +1,5 @@
-/*
- * @Author: ch
- * @Description:
- * @Date: 2021-04-08 18:57:01
- * @LastEditTime: 2023-10-23 11:58:40
- * @LastEditors: ch
- * @version:
- * @Reference:
- */
-#pragma once
+#ifndef H_C_IDF_MESSAGE_QUEUE_H
+#define H_C_IDF_MESSAGE_QUEUE_H
 
 #include "messageQueue_config.h"
 
@@ -19,14 +11,14 @@
 #define QUEUE_BUF_SIZE         10240
 #define MESSAGE_QUEUE_BUF_SIZE 500
 
-#define MQ_LOG_LEVEL_E 1
-#define MQ_LOG_LEVEL_W 2
-#define MQ_LOG_LEVEL_D 3
-#define MQ_LOG_LEVEL_I 4
-#define MQ_LOG_LEVEL_V 5
+#define MQ_LOG_LEVEL_E         1
+#define MQ_LOG_LEVEL_W         2
+#define MQ_LOG_LEVEL_D         3
+#define MQ_LOG_LEVEL_I         4
+#define MQ_LOG_LEVEL_V         5
 
-#define MQ_LOG_ENABLE  1
-#define MQ_LOG_LEVEL   MQ_LOG_LEVEL_E
+#define MQ_LOG_ENABLE          1
+#define MQ_LOG_LEVEL           MQ_LOG_LEVEL_E
 
 #define mq_log(TAG, ...) \
   do {                   \
@@ -72,7 +64,7 @@ typedef enum {
   mqStatusEmpty,              // mq is empty
   mqStatusNotEmpty,           // mq is not empyt
   mqStatusNotInit,            // mq is not init
-  mqStatusNotReady,            // mq is not init
+  mqStatusNotReady,           // mq is not init
 } mqStatus_t;
 
 typedef void (*MQPacketArrived)(uint8_t *packet, uint16_t packetLen, void *arg);
@@ -98,5 +90,6 @@ void MQInitMemery(MQ_MALLOC m, MQ_FREE f);
 
 #ifdef __cplusplus
 }
+#endif
 #endif
 #endif

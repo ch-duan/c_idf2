@@ -1,12 +1,6 @@
-/*
- * iap.h
- *
- *  Created on: Jul 28, 2020
- *      Author: ch
- */
 
-#ifndef INC_IAP_H_
-#define INC_IAP_H_
+#ifndef H_C_IDF_IAP_H
+#define H_C_IDF_IAP_H
 #include <stdio.h>
 #include <string.h>
 
@@ -217,7 +211,7 @@ int CheckoutAppUpdateFile(update_pack_t update_buffer);
 void save_app_update_status_external_flash(update_pack_t *update_buffer);
 int load_app_update_status(update_pack_t *update_buffer);
 
-#elif  defined(USE_INTERNAL_FLASH)
+#elif defined(USE_INTERNAL_FLASH)
 #endif
 
 void Vector_Init_Setting(uint32_t addr);
