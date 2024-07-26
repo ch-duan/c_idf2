@@ -2,7 +2,7 @@
  * @Author: ch
  * @Description:
  * @Date: 2021-04-08 18:56:55
- * @LastEditTime: 2023-10-23 18:04:06
+ * @LastEditTime: 2024-07-25 18:13:19
  * @LastEditors: ch
  * @version:
  * @Reference:
@@ -157,6 +157,9 @@ void MQInit(messageQueueHandler *self, MQPacketArrived pHandlerPacket, uint16_t 
     self->mq.queuebuf[i].ready = 0;
     if (self->mq.use_fixed_buffer) {
       self->mq.queuebuf[i].data = (uint8_t *) mq_malloc(self->mq.buffer_size);
+      if (self->mq.queuebuf[i].data==NULL) {
+        mq_log(TAG, "Malloc fail. No memory for buffer.\r\n");
+      }
     }
   }
 

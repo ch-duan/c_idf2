@@ -93,13 +93,13 @@ static uint32_t zero_mem; /*Give the address of this variable if 0 byte should b
 static uint32_t mem_max_size; /*Tracks the maximum total size of memory ever used from the internal heap*/
 #endif
 
-static uint8_t mem_buf1_32[MEM_BUF_SMALL_SIZE];
-static uint8_t mem_buf2_32[MEM_BUF_SMALL_SIZE];
+// static uint8_t mem_buf1_32[MEM_BUF_SMALL_SIZE];
+// static uint8_t mem_buf2_32[MEM_BUF_SMALL_SIZE];
 
-static lv_mem_buf_t mem_buf_small[] = {
-    {.p = mem_buf1_32, .size = MEM_BUF_SMALL_SIZE, .used = 0},
-    {.p = mem_buf2_32, .size = MEM_BUF_SMALL_SIZE, .used = 0}
-};
+// static lv_mem_buf_t mem_buf_small[] = {
+//     {.p = mem_buf1_32, .size = MEM_BUF_SMALL_SIZE, .used = 0},
+//     {.p = mem_buf2_32, .size = MEM_BUF_SMALL_SIZE, .used = 0}
+// };
 
 /**********************
  *      MACROS

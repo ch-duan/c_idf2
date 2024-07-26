@@ -3,18 +3,19 @@ cmake_minimum_required(VERSION 3.5)
 set(C_IDF_SRC ${C_IDF_SRC}
 )
 option(C_IDF_ENABLE_BACKTRACE "C_IDF Enable backtrace" ON)
-option(C_IDF_ENABLE_UVC "C_IDF Enable UVC" ON)
-option(C_IDF_ENABLE_I2C "C_IDF Enable i2c" ON)
-option(C_IDF_ENABLE_LITTLEFS "C_IDF Enable littlefs" ON)
+option(C_IDF_ENABLE_UVC "C_IDF Enable UVC" OFF)
+option(C_IDF_ENABLE_I2C "C_IDF Enable i2c" OFF)
+option(C_IDF_ENABLE_LITTLEFS "C_IDF Enable littlefs" OFF)
 option(C_IDF_ENABLE_FREERTOS "C_IDF Enable freertos" ON)
 option(C_IDF_ENABLE_LWRB "C_IDF Enable lwrb" ON)
-option(C_IDF_ENABLE_EXTERNAL_FLASH "C_IDF Enable external flash" ON)
-option(C_IDF_ENABLE_MODBUS "C_IDF Enable free modbus" ON)
-option(C_IDF_ENABLE_OTA "C_IDF Enable free ota" ON)
+option(C_IDF_ENABLE_EXTERNAL_FLASH "C_IDF Enable external flash" OFF)
+option(C_IDF_ENABLE_EXTERNAL_SRAM "C_IDF Enable external ram" OFF)
+option(C_IDF_ENABLE_MODBUS "C_IDF Enable free modbus" OFF)
+option(C_IDF_ENABLE_OTA "C_IDF Enable free ota" OFF)
 
 file(GLOB_RECURSE C_IDF_SRC "${CMAKE_CURRENT_LIST_DIR}/algorithm/*.c**"
   "${CMAKE_CURRENT_LIST_DIR}/button/*.c**"
-  "${CMAKE_CURRENT_LIST_DIR}/heap/*.c**"
+  "${CMAKE_CURRENT_LIST_DIR}/heap/m_malloc.c"
   "${CMAKE_CURRENT_LIST_DIR}/crc/crc.c"
   "${CMAKE_CURRENT_LIST_DIR}/crypto/*.c**"
   "${CMAKE_CURRENT_LIST_DIR}/encode/*.c**"
@@ -31,7 +32,6 @@ file(GLOB_RECURSE C_IDF_SRC "${CMAKE_CURRENT_LIST_DIR}/algorithm/*.c**"
 set(C_IDF_INCLUDES
   ${CMAKE_CURRENT_LIST_DIR}/
   ${CMAKE_CURRENT_LIST_DIR}/encode
-  ${CMAKE_CURRENT_LIST_DIR}/heap/lv_mem
   ${CMAKE_CURRENT_LIST_DIR}/heap
   ${CMAKE_CURRENT_LIST_DIR}/delay
   ${CMAKE_CURRENT_LIST_DIR}/crc
@@ -46,6 +46,16 @@ set(C_IDF_INCLUDES
   ${CMAKE_CURRENT_LIST_DIR}/uart_idle_rx
   # ${CMAKE_CURRENT_LIST_DIR}/ws2812
 )
+
+
+if(C_IDF_ENABLE_EXTERNAL_SRAM)
+  set(C_IDF_LV_MEM_SRC ${C_IDF_LV_MEM_SRC})
+  list(APPEND C_IDF_LV_MEM_SRC
+    "${CMAKE_CURRENT_LIST_DIR}/heap/lv_mem/*.c**"
+  )
+  list(APPEND C_IDF_SRC ${C_IDF_LV_MEM_SRC})
+  list(APPEND C_IDF_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/heap/lv_mem)
+endif()
 
 if(C_IDF_ENABLE_LITTLEFS)
   set(C_IDF_LITTLEFS_SRC ${C_IDF_LITTLEFS_SRC})
