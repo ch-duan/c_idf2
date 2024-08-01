@@ -158,7 +158,7 @@ typedef struct {
   uint16_t EN_Pin;           //!< flow control pin: 0=USB or RS-232 mode, >1=RS-485 mode
   mb_errot_t i8lastError;
   uint8_t u8Buffer[MAX_BUFFER];  // Modbus buffer for communication
-  uint8_t u8BufferSize;
+  uint16_t u8BufferSize;
   uint8_t u8lastRec;
   uint16_t *u16regs;
   uint16_t u16InCnt, u16OutCnt, u16errCnt;  // keep statistics of Modbus traffic
