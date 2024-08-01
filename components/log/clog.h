@@ -4,11 +4,11 @@
 #include <stdio.h>
 
 #include "FreeRTOS.h"
-//#include "SEGGER_RTT.h"
+#include "SEGGER_RTT.h"
 #include "cmsis_os2.h"
 
-// #define CLOG(fmt, ...)  printf(__VA_ARGS__)
-// #define CLOG(fmt, ...) SEGGER_RTT_printf(0, __VA_ARGS__)
+// #define LOGGER(fmt, ...)  printf(__VA_ARGS__)
+#define LOGGER(fmt, ...) SEGGER_RTT_printf(0, fmt,##__VA_ARGS__)
 
 typedef enum {
   LOG_NONE,
@@ -29,12 +29,12 @@ extern osSemaphoreId_t printf_mutex;
   if (printf_mutex != NULL) {                          \
     do {                                               \
       osSemaphoreAcquire(printf_mutex, portMAX_DELAY); \
-      printf(__VA_ARGS__);                             \
-      printf("\r\n");                                  \
+      LOGGER(__VA_ARGS__);                             \
+      LOGGER("\r\n");                                  \
       osSemaphoreRelease(printf_mutex);                \
     } while (0);                                       \
   } else {                                             \
-    printf(__VA_ARGS__);                               \
+    LOGGER(__VA_ARGS__);                               \
   }
 
 
@@ -42,12 +42,12 @@ extern osSemaphoreId_t printf_mutex;
   if (printf_mutex != NULL) {                          \
     do {                                               \
       osSemaphoreAcquire(printf_mutex, portMAX_DELAY); \
-      printf(__VA_ARGS__);                             \
-      printf("\r\n");                                  \
+      LOGGER(__VA_ARGS__);                             \
+      LOGGER("\r\n");                                  \
       osSemaphoreRelease(printf_mutex);                \
     } while (0);                                       \
   } else {                                             \
-    printf(__VA_ARGS__);                               \
+    LOGGER(__VA_ARGS__);                               \
   }
 
 
