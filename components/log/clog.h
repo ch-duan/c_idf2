@@ -4,11 +4,11 @@
 #include <stdio.h>
 
 #include "FreeRTOS.h"
-#include "SEGGER_RTT.h"
+// #include "SEGGER_RTT.h"z
 #include "cmsis_os2.h"
 
-// #define LOGGER(fmt, ...)  printf(__VA_ARGS__)
-#define LOGGER(fmt, ...) SEGGER_RTT_printf(0, fmt,##__VA_ARGS__)
+#define LOGGER(fmt, ...)  printf(fmt,##__VA_ARGS__)
+// #define LOGGER(fmt, ...) SEGGER_RTT_printf(0, fmt,##__VA_ARGS__)
 
 typedef enum {
   LOG_NONE,
