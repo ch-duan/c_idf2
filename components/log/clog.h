@@ -4,11 +4,11 @@
 #include <stdio.h>
 
 #include "FreeRTOS.h"
-// #include "SEGGER_RTT.h"z
+// #include "SEGGER_RTT.h"
 #include "cmsis_os2.h"
 
 #define LOGGER(fmt, ...)  printf(fmt,##__VA_ARGS__)
-// #define LOGGER(fmt, ...) SEGGER_RTT_printf(0, fmt,##__VA_ARGS__)
+// #define LOGGER(fmt, ...) SEGGER_RTT_printf(0, fmt, ##__VA_ARGS__)
 
 typedef enum {
   LOG_NONE,
@@ -37,8 +37,7 @@ extern osSemaphoreId_t printf_mutex;
     LOGGER(__VA_ARGS__);                               \
   }
 
-
-#define CLOG_P(...)                                      \
+#define CLOG_P(...)                                    \
   if (printf_mutex != NULL) {                          \
     do {                                               \
       osSemaphoreAcquire(printf_mutex, portMAX_DELAY); \
@@ -49,7 +48,6 @@ extern osSemaphoreId_t printf_mutex;
   } else {                                             \
     LOGGER(__VA_ARGS__);                               \
   }
-
 
 #define LOG_LEVEL_LOCAL(level, tag, format, ...)                   \
   do {                                                             \

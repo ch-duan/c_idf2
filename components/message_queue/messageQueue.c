@@ -2,7 +2,7 @@
  * @Author: ch
  * @Description:
  * @Date: 2021-04-08 18:56:55
- * @LastEditTime: 2024-07-25 18:13:19
+ * @LastEditTime: 2024-08-06 16:44:11
  * @LastEditors: ch
  * @version:
  * @Reference:
@@ -108,6 +108,9 @@ mqStatus_t enqueue(messageQueue_t *mq, uint8_t *data, uint16_t size, void *argv)
       return mqErrorNotEnoughSpace;
     }
     memcpy(mq->queuebuf[mq->writeIdx].data, data, size);
+    if (size < mq->buffer_size) {
+      mq->queuebuf[mq->writeIdx].data[size] = 0;
+    }
   }
 
   mq->queuebuf[mq->writeIdx].argv = argv;
@@ -157,7 +160,7 @@ void MQInit(messageQueueHandler *self, MQPacketArrived pHandlerPacket, uint16_t 
     self->mq.queuebuf[i].ready = 0;
     if (self->mq.use_fixed_buffer) {
       self->mq.queuebuf[i].data = (uint8_t *) mq_malloc(self->mq.buffer_size);
-      if (self->mq.queuebuf[i].data==NULL) {
+      if (self->mq.queuebuf[i].data == NULL) {
         mq_log(TAG, "Malloc fail. No memory for buffer.\r\n");
       }
     }
