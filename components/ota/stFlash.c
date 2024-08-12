@@ -9,6 +9,8 @@
 
 #include <stdio.h>
 
+#include "cmsis_os2.h"
+
 #if defined(STM32F405xx) || defined(STM32F415xx) || defined(STM32F407xx) || defined(STM32F417xx)
 const uint32_t flash_sector_start_addr[] = {ADDR_FLASH_SECTOR_0, ADDR_FLASH_SECTOR_1, ADDR_FLASH_SECTOR_2,  ADDR_FLASH_SECTOR_3,
                                             ADDR_FLASH_SECTOR_4, ADDR_FLASH_SECTOR_5, ADDR_FLASH_SECTOR_6,  ADDR_FLASH_SECTOR_7,
@@ -36,7 +38,7 @@ void jump2APP(uint32_t addr) {
     // Jump to user application //
     HAL_SuspendTick();  // SysTick shutdown
     HAL_RCC_DeInit();
-    HAL_DeInit();       // Periphery DeInit
+    HAL_DeInit();  // Periphery DeInit
     JumpAddress = *(__IO uint32_t *) (addr + 4);
     Jump_To_Application = (pFunction) JumpAddress;
     //    __set_PRIMASK(1);
@@ -55,7 +57,7 @@ void FLASH_If_Init(void) {
 #ifdef STMF1
   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_PGSERR | FLASH_FLAG_WRPERR | FLASH_FLAG_OPTVERR);
 #endif
-#ifdef STMF4
+#ifdef STM32F407xx
   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
 #endif
   /* Unlock the Program memory */
@@ -278,7 +280,7 @@ uint32_t GetSectorStartAddr(uint32_t sector) {
 uint32_t GetSectorSize(uint32_t sector) {
   uint32_t size = 0;
   if ((sector <= 3) || (sector >= 12 && sector <= 15)) {
-    size = 0x4000;   // 16K
+    size = 0x4000;  // 16K
   } else if (sector == 4 || sector == 16) {
     size = 0x10000;  // 64K
   } else if ((sector >= 5 && sector <= 11) || (sector >= 17 && sector <= 23)) {
@@ -349,4 +351,32 @@ uint32_t GetSector(uint32_t Address) {
   }
 #endif
   return sector;
+}
+
+int internal_flash_write(uint32_t addr, uint8_t *in_data, uint32_t size) {
+  __disable_irq();
+  osKernelLock();
+  uint32_t sector = GetSector(addr);
+  HAL_StatusTypeDef status = HAL_OK;
+  uint32_t statusWrite = 0, statusErase = 0;
+  statusErase = FLASH_If_Erase_sector(sector);
+  printf("Erase status:%u\r\n", statusErase);
+  if (HAL_OK != status) {
+    return -1;
+  }
+  statusWrite = FLASH_If_Write(addr, addr + size, in_data, size);
+  printf("write status:%u\r\n", statusErase);
+  if (HAL_OK != statusWrite) {
+    return -1;
+  }
+  osKernelUnlock();
+  __enable_irq();
+  return 0;
+}
+
+int internal_flash_read(uint32_t addr, uint32_t *out_data, uint32_t size) {
+  for (uint32_t i = addr; i < addr + size; i++) {
+    *(out_data + i) = *(__IO uint32_t *) i;
+  }
+  return 0;
 }

@@ -52,7 +52,6 @@ extern "C" {
 
 #define IAP_TEMP_CACHE_SIZE   1024 * 1024 * 1
 
-#define STMF4
 
 #define IAP_MAGIC 0x5A5F5B5E
 typedef enum {

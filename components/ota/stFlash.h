@@ -77,6 +77,8 @@ HAL_StatusTypeDef FlashWriteEnv(uint32_t addr, uint32_t *p_source, uint32_t len)
 uint32_t GetSector(uint32_t Address);
 uint32_t GetSectorStartAddr(uint32_t sector);
 uint32_t GetSectorSize(uint32_t sector);
+int internal_flash_write(uint32_t addr, uint8_t *in_data, uint32_t size);
+int internal_flash_read(uint32_t addr, uint32_t *out_data, uint32_t size);
 #ifdef __cplusplus
 }
 #endif
