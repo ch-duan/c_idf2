@@ -25,8 +25,10 @@ file(GLOB_RECURSE C_IDF_SRC "${CMAKE_CURRENT_LIST_DIR}/algorithm/*.c**"
   "${CMAKE_CURRENT_LIST_DIR}/message_queue/*.c"
   "${CMAKE_CURRENT_LIST_DIR}/mutex/*.c"
   "${CMAKE_CURRENT_LIST_DIR}/string_tools/*.c"
+
   # "${CMAKE_CURRENT_LIST_DIR}/ws2812/*.c"
   "${CMAKE_CURRENT_LIST_DIR}/uart_idle_rx/*.c"
+  "${CMAKE_CURRENT_LIST_DIR}/freeRTOS_gdb.c"
 )
 
 set(C_IDF_INCLUDES
@@ -44,9 +46,9 @@ set(C_IDF_INCLUDES
   ${CMAKE_CURRENT_LIST_DIR}/message_queue
   ${CMAKE_CURRENT_LIST_DIR}/algorithm/filter
   ${CMAKE_CURRENT_LIST_DIR}/uart_idle_rx
+
   # ${CMAKE_CURRENT_LIST_DIR}/ws2812
 )
-
 
 if(C_IDF_ENABLE_EXTERNAL_SRAM)
   set(C_IDF_LV_MEM_SRC ${C_IDF_LV_MEM_SRC})
@@ -142,7 +144,7 @@ endif()
 if(C_IDF_ENABLE_OTA)
   set(C_IDF_OTA_SRC ${C_IDF_OTA_SRC})
   file(GLOB_RECURSE C_IDF_OTA_SRC "${CMAKE_CURRENT_LIST_DIR}/ota/*.c**")
-  
+
   list(APPEND C_IDF_SRC ${C_IDF_OTA_SRC})
   list(APPEND C_IDF_INCLUDES
     ${CMAKE_CURRENT_LIST_DIR}/ota
