@@ -103,3 +103,19 @@ int UartPacketHandlerInit(UartMessageHandler *msgHandler, UART_HandleTypeDef *ua
   msgHandler->llhandler.deliver_packet = pHandlerPacket;
   return LLInit(&(msgHandler->llhandler), uart, recv_buffer, recv_packet_max);
 }
+
+void reset_uart_error(UartMessageHandler *msgHandler) {
+  if (msgHandler != NULL && msgHandler->llhandler.uart != NULL && msgHandler->llhandler.uart->hdmarx != NULL) {
+    HAL_UART_DMAResume(msgHandler->llhandler.uart);
+    __HAL_DMA_DISABLE(msgHandler->llhandler.uart->hdmarx);
+    memset(msgHandler->llhandler.m_framePayload, 0, msgHandler->llhandler.FrameLength);
+    msgHandler->llhandler.uart->hdmarx->Instance->NDTR = msgHandler->llhandler.m_recv_packet_max;
+    __HAL_DMA_ENABLE(msgHandler->llhandler.uart->hdmarx);
+#if USE_RXEVENTCALLBACK == 0
+    HAL_UART_Receive_DMA(self->uart, self->m_framePayload, self->m_recv_packet_max);
+#else
+    HAL_UARTEx_ReceiveToIdle_DMA(msgHandler->llhandler.uart, msgHandler->llhandler.m_framePayload, msgHandler->llhandler.m_recv_packet_max);
+#endif
+    __HAL_UART_ENABLE_IT(msgHandler->llhandler.uart, UART_IT_IDLE);
+  }
+}

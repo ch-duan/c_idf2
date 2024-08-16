@@ -31,6 +31,7 @@ void UART_IDLE_Callback(LinkLayerHandler *self, UART_HandleTypeDef *huart);
 
 int UartPacketHandlerInit(UartMessageHandler *msgHandler, UART_HandleTypeDef *uart, uint8_t *recv_buffer, uint16_t recv_packet_max,
                           PacketArrived pHandlerPacket);
+void reset_uart_error(UartMessageHandler *msgHandler);
 #ifdef __cplusplus
 }
 #endif
