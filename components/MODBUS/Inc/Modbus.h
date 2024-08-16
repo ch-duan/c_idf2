@@ -240,7 +240,7 @@ uint8_t RingCountBytes(modbusRingBuffer_t *xRingBuffer);  // return the number o
 void RingClear(modbusRingBuffer_t *xRingBuffer);          // flushes the ring buffer
 
 extern uint8_t numberHandlers;  // global variable to maintain the number of concurrent handlers
-
+void Modbus_HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart);
 /* prototypes of the original library not implemented
 
 uint16_t getInCnt(); //!<number of incoming messages

@@ -21,7 +21,7 @@
  * @ingroup UartHandle UART HAL handler
  */
 
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+void Modbus_HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 	/* Modbus RTU TX callback BEGIN */
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
