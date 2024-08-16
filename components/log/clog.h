@@ -6,9 +6,33 @@
 #include "FreeRTOS.h"
 // #include "SEGGER_RTT.h"
 #include "cmsis_os2.h"
+typedef void (*log_check_send_finish_t)();
+typedef void (*log_out_t)(uint8_t *buffer, uint32_t len);
 
-#define LOGGER(fmt, ...)  printf(fmt,##__VA_ARGS__)
-// #define LOGGER(fmt, ...) SEGGER_RTT_printf(0, fmt, ##__VA_ARGS__)
+typedef struct {
+  log_check_send_finish_t check_send_finish;
+  log_out_t log_out;
+  uint8_t *log_buf;
+  uint32_t buf_size;
+} log_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void init_log(log_t *log);
+void init_log_check(log_check_send_finish_t check_send_finish);
+void call_log_check();
+void printf_log(const char *fmt, ...);
+extern log_t *_log_t;
+extern osSemaphoreId_t printf_mutex;
+
+#define LOGGER(fmt, ...)            \
+  if (_log_t->log_buf != NULL) {    \
+    printf_log(fmt, ##__VA_ARGS__); \
+  } else {                          \
+    printf(fmt, ##__VA_ARGS__);     \
+  }                                 \
+  // #define LOGGER(fmt, ...) SEGGER_RTT_printf(0, fmt, ##__VA_ARGS__)
 
 typedef enum {
   LOG_NONE,
@@ -23,9 +47,8 @@ typedef enum {
 #define LOG_LOCAL_LEVEL LOG_INFO
 #endif
 
-extern osSemaphoreId_t printf_mutex;
-
 #define CLOG(...)                                      \
+  call_log_check();                                    \
   if (printf_mutex != NULL) {                          \
     do {                                               \
       osSemaphoreAcquire(printf_mutex, portMAX_DELAY); \
@@ -38,11 +61,11 @@ extern osSemaphoreId_t printf_mutex;
   }
 
 #define CLOG_P(...)                                    \
+  call_log_check();                                    \
   if (printf_mutex != NULL) {                          \
     do {                                               \
       osSemaphoreAcquire(printf_mutex, portMAX_DELAY); \
       LOGGER(__VA_ARGS__);                             \
-      LOGGER("\r\n");                                  \
       osSemaphoreRelease(printf_mutex);                \
     } while (0);                                       \
   } else {                                             \
@@ -62,10 +85,6 @@ extern osSemaphoreId_t printf_mutex;
 #define CLOG_W(TAG, ...) LOG_LEVEL_LOCAL(LOG_WARN, TAG, __VA_ARGS__)
 #define CLOG_E(TAG, ...) LOG_LEVEL_LOCAL(LOG_ERROR, TAG, __VA_ARGS__)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-void init_log(void);
 #ifdef __cplusplus
 }
 #endif
